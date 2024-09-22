@@ -7,20 +7,19 @@ import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 
 import model.entities.Reservation;
+import model.exceptions.DomainException;
 
 public class Program {
 
-	public static void main(String[] args) throws ParseException {
+	public static void main(String[] args) {
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-		int number = Integer.parseInt(JOptionPane.showInputDialog("Room number:"));
-		Date checkIn = sdf.parse(JOptionPane.showInputDialog("Check-in date (dd/MM/yyyy):"));
-		Date checkOut = sdf.parse(JOptionPane.showInputDialog("Check-out date (dd/MM/yyyy):"));
+		try {
+			int number = Integer.parseInt(JOptionPane.showInputDialog("Room number:"));
+			Date checkIn = sdf.parse(JOptionPane.showInputDialog("Check-in date (dd/MM/yyyy):"));
+			Date checkOut = sdf.parse(JOptionPane.showInputDialog("Check-out date (dd/MM/yyyy):"));
 
-		if (!checkOut.after(checkIn)) {
-			JOptionPane.showMessageDialog(null, "Error in reservation: Check-out date must be after check-in date.");
-		} else {
 			Reservation reservation = new Reservation(number, checkIn, checkOut);
 			JOptionPane.showMessageDialog(null, "Reservation: " + reservation);
 
@@ -28,14 +27,15 @@ public class Program {
 			checkIn = sdf.parse(JOptionPane.showInputDialog("Check-in date (dd/MM/yyyy):"));
 			checkOut = sdf.parse(JOptionPane.showInputDialog("Check-out date (dd/MM/yyyy):"));
 
-			String error = reservation.updateDates(checkIn, checkOut);
-			if (error != null) {
-				JOptionPane.showMessageDialog(null, "Error in reservation: " + error);
-			} else {
-				JOptionPane.showMessageDialog(null, "Reservation: " + reservation);
-			}
+			reservation.updateDates(checkIn, checkOut);
 
+			JOptionPane.showMessageDialog(null, "Reservation: " + reservation);
+		} catch (ParseException e) {
+			JOptionPane.showMessageDialog(null, "Invalid date format.");
+		} catch (DomainException e) {
+			JOptionPane.showMessageDialog(null, "Update error: " + e.getMessage());
+		}catch(RuntimeException e) {
+			JOptionPane.showMessageDialog(null, "Unexpected error!", null, JOptionPane.ERROR_MESSAGE, null);
 		}
 	}
-
 }
