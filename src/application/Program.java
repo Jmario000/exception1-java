@@ -1,7 +1,6 @@
 package application;
 
 import java.util.Date;
-import java.awt.HeadlessException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -29,16 +28,13 @@ public class Program {
 			checkIn = sdf.parse(JOptionPane.showInputDialog("Check-in date (dd/MM/yyyy):"));
 			checkOut = sdf.parse(JOptionPane.showInputDialog("Check-out date (dd/MM/yyyy):"));
 
-			Date now = new Date();
-			if (checkIn.before(now) || checkOut.before(now)) {
-				JOptionPane.showMessageDialog(null, "Error: Reservation dates for update must be future dates.");
-			} else if (!checkOut.after(checkIn)) {
-				JOptionPane.showMessageDialog(null,
-						"Error in reservation: Check-out date must be after check-in date.");
+			String error = reservation.updateDates(checkIn, checkOut);
+			if (error != null) {
+				JOptionPane.showMessageDialog(null, "Error in reservation: " + error);
 			} else {
-				reservation.updateDates(checkIn, checkOut);
 				JOptionPane.showMessageDialog(null, "Reservation: " + reservation);
 			}
+
 		}
 	}
 
